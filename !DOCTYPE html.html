@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>A Letter For You 💌</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+
+    :root {
+      --cream: #fdf6ec;
+      --warm: #f5e6d0;
+      --ink: #3b2f2f;
+      --rose: #c0645a;
+      --blush: #e8b4a8;
+      --gold: #c9a84c;
+      --sage: #8aab8a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: var(--warm);
+      background-image:
+        radial-gradient(ellipse at 20% 30%, rgba(192,100,90,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 70%, rgba(138,171,138,0.08) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      font-family: 'Lora', Georgia, serif;
+    }
+
+    .envelope-wrap {
+      perspective: 1000px;
+    }
+
+    .envelope {
+      width: 640px;
+      max-width: 100%;
+      position: relative;
+    }
+
+    /* Wax seal button */
+    .seal-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #d4704a, #a03020);
+      border: none;
+      cursor: pointer;
+      margin: 0 auto 28px auto;
+      box-shadow: 0 4px 18px rgba(160,48,32,0.4), inset 0 1px 3px rgba(255,255,255,0.2);
+      font-size: 28px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      z-index: 10;
+      animation: float 3s ease-in-out infinite;
+    }
+    .seal-btn::after {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.25);
+    }
+    .seal-btn:hover {
+      transform: scale(1.08) translateY(-2px);
+      box-shadow: 0 8px 24px rgba(160,48,32,0.5), inset 0 1px 3px rgba(255,255,255,0.2);
+    }
+    .seal-hint {
+      text-align: center;
+      font-family: 'Lora', serif;
+      font-style: italic;
+      color: var(--rose);
+      font-size: 13px;
+      margin-bottom: 12px;
+      opacity: 0.8;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    /* Letter paper */
+    .letter {
+      background: var(--cream);
+      border-radius: 2px;
+      padding: 56px 60px 64px;
+      position: relative;
+      box-shadow:
+        0 2px 4px rgba(59,47,47,0.08),
+        0 12px 40px rgba(59,47,47,0.12),
+        0 40px 80px rgba(59,47,47,0.08);
+      display: none;
+      opacity: 0;
+      transform: translateY(-16px) scaleY(0.96);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      border-top: 3px solid var(--gold);
+    }
+    .letter.open {
+      display: block;
+    }
+    .letter.visible {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+    }
+
+    /* Decorative corner flourish */
+    .letter::before, .letter::after {
+      content: '✿';
+      position: absolute;
+      font-size: 18px;
+      color: var(--blush);
+      opacity: 0.5;
+    }
+    .letter::before { top: 18px; left: 22px; }
+    .letter::after  { bottom: 18px; right: 22px; }
+
+    /* Ruled lines */
+    .ruled-lines {
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        transparent,
+        transparent 31px,
+        rgba(201,168,76,0.12) 31px,
+        rgba(201,168,76,0.12) 32px
+      );
+      background-position: 0 80px;
+      border-radius: 2px;
+      pointer-events: none;
+    }
+
+    .letter-content { position: relative; z-index: 1; }
+
+    .date {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 13px;
+      color: var(--gold);
+      text-align: right;
+      margin-bottom: 32px;
+      letter-spacing: 0.04em;
+    }
+
+    .greeting {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--rose);
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    .body-text p {
+      font-size: 16px;
+      line-height: 2;
+      color: var(--ink);
+      margin-bottom: 20px;
+      font-weight: 400;
+    }
+
+    .body-text p em {
+      font-family: 'Playfair Display', serif;
+      color: var(--rose);
+      font-style: italic;
+    }
+
+    .sign-off {
+      margin-top: 40px;
+    }
+    .sign-off p {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 2;
+    }
+    .signature {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--rose);
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* Pressed flowers decoration */
+    .deco-row {
+      text-align: center;
+      font-size: 20px;
+      margin: 28px 0;
+      letter-spacing: 12px;
+      opacity: 0.6;
+    }
+
+    /* Bottom stamp */
+    .stamp {
+      position: absolute;
+      bottom: 28px;
+      right: 28px;
+      width: 52px;
+      height: 52px;
+      border: 2px solid var(--blush);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      opacity: 0.4;
+      transform: rotate(8deg);
+    }
+
+    /* Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-6px); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50%       { opacity: 1; }
+    }
+
+    /* Offline-safe fallback for fonts */
+    @font-face {
+      font-family: 'FallbackSerif';
+      src: local('Georgia'), local('Times New Roman');
+    }
+  </style>
+</head>
+<body>
+
+  <div class="envelope-wrap">
+    <div class="envelope">
+      <p class="seal-hint">Click the seal to open ✨</p>
+      <button class="seal-btn" onclick="openLetter(this)" title="Open letter">💌</button>
+
+      <div class="letter" id="letter">
+        <div class="ruled-lines"></div>
+        <div class="stamp">🌸</div>
+        <div class="letter-content">
+
+          <p class="date">Date:-IDK when u get this</p>
+
+          <p class="greeting">Waraai Chikka ZOOOBBBUUUUUU,</p>
+
+          <div class="body-text">
+            <p>
+              Alright sooooo this is a biieee for a looooonng time and well yeah it is preety long time well idk what to write and what to not im trying to write beacuse i know i wont be able to say anything when u actually go. i will missssss youu yesss maybe u will too atleast i hopeee u do 😁. Yeah i used claude to make this because obv i cant make the whole thing but yeah its me writing. Hello Zoobiya its me i just wanted to say there is not even a single day i regretted the Friendship not even a single day i regretted you. U are the first and maybe only person i am myself yeah sometimes i get maybe too much but hey still me. U are not less though i thought ur a cute inocent girl buttt ahhhhhhh u girl i swear if ur were just cute i would have naver fallen for you never but u r not just cute uuuurrrrrrrrr the mosttttttttttt beautifullll and theee bestttttttttttttt insaan(aadmi) i everrrrrr known in my life and believe me i have seen way too many of people. I actually am gratefull that u came into my life well actually i did but still tooo gratefulll u changed(manipulated😁) many manyyyyy bad things that i had and still changing. idk how to write a letter but idk me nhi likh paa rha idk how to say what i want to. All i want to say is ZOOBIYA TARIQ, THANKKK YOUUU FOR COMING INTO ME LIFE THANK YOUUU FOR MAKING ME THE CHOMUU THAT WAS SHY TO COME OUT.  ZOOBIYA TARIQ I LOVE YOU. Ik Ik u dont but holdd this is my letter😁 Well meet u after 2 monthsss this aint a goodbyee obv. I will missssss youuuu and u will face 2 month worth of missing phele hi bta diya kabhi phir bakwass😁 and yeah i wrote innocent jaan bujh ke glt heheheheheh kaisa lga heheheheh. yeah please dont judge idk im bad at writing. BBBBBBBYYYYYYYYYYYYYYYYYEEEEEEEEEEEEEEEEEE BBBBBBBBBBBBBBBYYYYYYYYYYYYYYEEEEEEEEEEEEEEEE CCCCCCCUUUUUUTTTTTTTTTIIIIIIIIIIEEEEEEEEEEEEEEEE. Oh yeah and i have been trying toing to write this for pretty longggg😭 not like saksham ko dekh krr 🥹. Yeahhhh sorrryyyy for the troublee that i gave in last few months actually till now im sorry for that. Byeee Zoobiya i’ll miss u the mosttttt 😁😁 dont cryy okayyy message agr yaad aaye na bhi aaye to krdenaa🥹. BYEEEEEEE BYEEEEEEEEEEEEEEEE 
+            </p>
+            
+          </div>
+
+          <div class="sign-off">
+            <p></p>
+            <p class="signature">MEE</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openLetter(btn) {
+      const letter = document.getElementById('letter');
+      const hint   = document.querySelector('.seal-hint');
+
+      // Animate seal
+      btn.style.transform = 'scale(0) rotate(180deg)';
+      btn.style.transition = 'transform 0.4s cubic-bezier(0.4,0,0.2,1)';
+
+      setTimeout(() => {
+        btn.style.display  = 'none';
+        hint.style.display = 'none';
+        letter.classList.add('open');
+
+        // Trigger CSS transition next frame
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => letter.classList.add('visible'));
+        });
+      }, 380);
+    }
+
+    
+    dateEl.textContent = today;
+  </script>
+</body>
+</html>
